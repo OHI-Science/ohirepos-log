@@ -1,0 +1,127 @@
+# Creating OHI repos
+
+This is how you create OHI repos using the package `ohirepos`. 
+
+
+# Create repo on GitHub.com and register repo
+
+There are two things you need to do before executing the script below. 
+
+1. Make a repository on GitHub.com. You'll need a GitHub account and if you're making the repo within the [OHI-Science](https://github.com/OHI-Science) organization you'll need administration privileges. We typically make OHI repos with short, 3-letter keys, for example `bhi` and `gye`.  
+
+<center><img src="../ohirepos-log/images/create-new-gh-repo.png" width="450px"></center>
+
+
+2. Add info by hand to `ohirepos-log/repo_registry.csv`. To create a Starter Repo with only a prep folder, all you need to input are the first two columns (`study_key` and `study_area`). Make sure the `study_key` is what you named your GitHub repository. If you're making a Full Repo, you'll need to provide a filepath for shapefiles. Additionally, if you want to populate the repo with data from global assessments, check `ohirepos-log/rgn_global.csv` to cross-check global name and rgn_id to populate the repo. See the OHI Manual section on [requesting your repositories](http://ohi-science.org/manual/#requesting-your-repositories) for more information between the Starter Repo and the Full Repo.
+
+Now you're ready for R. 
+
+# Initial Setup
+
+## Assign variables
+
+You will need to assign two variables based on the repository you want to created. Once you set these variables you'll be able to run this code chunk.
+
+1. your repo's key — the same one that you set above and registered in `repo_registry`
+2. a temporary directory where you want to work locally on your computer
+
+```{r setup, eval=FALSE}
+
+## you set these variables
+key <- 'test3'
+dir_temp <- '~/github/clip-n-ship'
+
+
+## load libraries
+devtools::install_github("ohi-science/ohicore@dev")
+devtools::load_all('~/github/ohirepos') # or devtools::install_github("ohi-science/ohirepos")
+library(ohirepos) 
+library(tidyverse)
+
+
+## read in repo registry information, add working directory 
+repo_registry <- readr::read_csv('repo_registry.csv') %>%
+  dplyr::filter(study_key == key) %>%
+  dplyr::mutate(dir_repo = file.path(dir_temp, key))
+
+
+## create working dir if it doesn't already exist
+if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
+
+
+# dir_work <- path.expand('~/github/ohi-webapps') # get rid of any reliance on ohi-webapps
+## load this stuff from ohirepos.
+# source(file.path(dir_work, 'common.r'))
+# source(file.path(dir_work, 'create_init_sc.R'))
+
+```
+
+
+# Populate the Starter Repo
+
+The Starter Repo has some initial files including a README, as well as a `prep` folder with sub-folders for every goal and sub-goal. Additionally, create and push the project website. The default for these functions is to push updates to github.com/ohi-science/[key].
+
+If you need to unpopulate an existing repo, there are instructions below. 
+
+```{r, eval=FALSE}
+
+## populate the prep repo — create a repo object for the master branch 
+repo <- ohirepos::populate_init(repo_registry, push = TRUE)
+repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
+
+## deploy the website — don't create a repo object because it's a gh-pages branch
+ohirepos::deploy_website(repo_registry, push = TRUE) 
+
+```
+
+# Populate Full Repo
+
+You'll need to fill out all fields in `repo_registry.csv` to populate the Full Repo. You can choose the origin of the files you'll copy (it defaults to ohi-global). You have to make sure there a copy of the origin repo cloned locally. 
+
+populate layers folder and layers.csv, this will also create the scenario folder. And then create conf.  Run these in order.
+
+This doesn't push, just populates. --> keep this?
+
+If you need to unpopulate your repo's scenario folder if you've redefined regions or something, clone it locally and pull, delete the senario folder, and then continue here. 
+
+You'll run these as a suite of things, so just clone during populate_layers and push as the final move after the check.
+
+```{r populate, eval=FALSE}
+
+repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
+  ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
+
+populate_conf(repo_registry)
+
+populate_etc(repo_registry)
+  ## TODO: add viz
+
+## create repo's maps
+create_repo_map(key, dir_spatial, dir_scenario)
+## TODO, check this out again! Haven't yet in the July 2017 
+# -->> will need to ## Inspect user's shapefiles and save as OHI shapefiles
+
+```
+
+
+## Calculate scores and create scores.csv
+Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
+
+```{r calculate, eval=FALSE}
+
+## calculate scores # TODO: remove ohicore@dev dependency
+calculate_scores_check(repo_registry)
+
+
+## and push!
+commit_and_push(repo_registry, 
+                commit_message = 'populating test3 yo!')
+```
+
+
+
+
+# dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+#            'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+#            'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
