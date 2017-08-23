@@ -1,0 +1,134 @@
+# This is prep_chl.Rmd
+
+This is for modifying the existing chl repo with new regions (16 total, up from original 12). Should have been able to run edit_repos.rmd but needed to make some additional tweaks to the shapefiles. 
+
+## 0. add info to `sc_studies_custom.csv` 
+
+Add by hand to `ohi-webapps/custom/sc_studies_custom.csv`
+
+## 1. setup
+
+```{r setup, eval=F}
+
+source('~/github/ohi-webapps/_source_and_load.r')
+
+key <- 'chl'
+
+# directories
+setwd(dir_webapps)
+dir_spatial = file.path(dir_M, 'git-annex/clip-n-ship', key, 'spatial')
+dir_shp_in  = file.path(dir_spatial, 'custom')
+
+source(file.path(dir_webapps, 'create_init.R'))
+source(file.path(dir_webapps, 'create_init_sc.R'))
+
+
+```
+
+## Inspect user's shapefiles and save as OHI shapefiles
+
+```{r inspect shapefiles, eval=F}
+
+# read in shp files and save with desired headers in data frame.
+shp = rgdal::readOGR(dsn = file.path(dir_shp_in, 'raw'),
+              layer = 'Chile_Ocean_Regions')
+
+# view dataframe and map
+shp@data
+shp
+plot(shp)
+
+# save as shapefiles. will create 4 files: .dbf, .prj, .shp, .shx
+writeOGR(shp, dsn = dir_shp_in, 
+         layer = 'chl_shp', driver = 'ESRI Shapefile', overwrite=T) 
+
+## save rgn_offshore_data.csv on git-annex
+readr::write_csv(shp@data %>% 
+                   select(rgn_id, rgn_name, area_km2) %>%
+                   arrange(rgn_id), 
+                 file.path(dir_spatial, 'rgn_offshore_data.csv'))
+
+# save lookup table with unique rgn_ids on github
+readr::write_csv(shp@data, sprintf('~/github/ohi-webapps/custom/%s/rgns_custom.csv', key))
+
+```
+looking good. 
+
+## Clone existing repo
+
+```{r clone existing repo, eval=FALSE}
+
+## clone chl repo
+unlink(dir_repo, recursive=T, force=T)
+repo <- clone(git_url, normalizePath(dir_repo, mustWork=F))
+setwd(dir_repo)
+
+```
+
+## Unpopulate existing layers; rename scenario
+delete contents so can start afresh
+
+```{r unpopulate, eval=F}
+## rename subcountry2014 -> region2016. 
+file.rename(from = file.path(dir_repo, 'subcountry2014'),
+            to   = file.path(dir_repo, 'region2016'))
+
+## unpopulate_layers_conf
+unpopulate_layers_conf(key, dir_repos, dir_repo, git_url, default_scenario)
+
+## a few extra files to delete from CHL: 
+also_delete <- paste(dir_repo, 
+                     c('copy_webapps_templates.r', 'ohi-travis-functions.R', 'travis-tool.sh'), sep = '/')
+unlink(also_delete, recursive = TRUE, force = TRUE)
+```
+
+## Repopulate all the things
+
+```{r populate, eval=F}
+## populate layers folder and layers.csv, and conf. Doesn't push. 
+populate_layers(key, dir_repo, lyrs_gl, dir_global, dir_scenario, multi_nation = FALSE)
+populate_conf(key, dir_scenario, dir_global) ## look at TODOs in functions.r
+populate_etc(key, dir_scenario)
+```
+
+## Calculate scores and create scores.csv
+
+Can also test this from the repo itself (open the CHL .rproj)
+
+```{r calculate, eval=F}
+## calculate scores and create scores.csv
+calculate_scores_check()
+
+```
+
+
+## Push!
+
+```{r push, eval=F}
+# push repo
+setwd(dir_repo)
+push_branch(branch = 'draft', current_msg = 'updated CHL repo with new region boundaries') 
+
+```
+
+## Rename draft to master
+
+```{r, eval=F}
+
+system('git status')
+system('git branch -m draft master')
+system('git branch')
+
+## Then delete on GitHub and repush http://stackoverflow.com/questions/9524933/renaming-a-branch-in-github
+push_branch(branch = 'master', current_msg = 'renamed draft branch to master branch') 
+
+```
+
+
+## Create Repo's Maps -- this is for the OHI+ Project Page/WebApp; keep it here for now...
+
+```{r create_repo_map etc}
+# create_repo_map
+create_repo_map(key, dir_shp_in, dir_spatial) 
+
+```
