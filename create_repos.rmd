@@ -3,7 +3,7 @@
 This is how you create OHI repos using the package `ohirepos`. 
 
 
-# Create repo on GitHub.com and register repo
+# Before R: First create repo on GitHub.com and register repo
 
 There are two things you need to do before executing the script below. 
 
@@ -28,12 +28,12 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'test3'
+key <- 'bali'
 dir_temp <- '~/github/clip-n-ship'
 
 
 ## load libraries
-devtools::install_github("ohi-science/ohicore@dev")
+# devtools::install_github("ohi-science/ohicore@dev")
 devtools::load_all('~/github/ohirepos') # or devtools::install_github("ohi-science/ohirepos")
 library(ohirepos) 
 library(tidyverse)
@@ -63,7 +63,7 @@ The Starter Repo has some initial files including a README, as well as a `prep` 
 
 If you need to unpopulate an existing repo, there are instructions below. 
 
-```{r, eval=FALSE}
+```{r starter repo, eval=FALSE}
 
 ## populate the prep repo — create a repo object for the master branch 
 repo <- ohirepos::populate_init(repo_registry, push = TRUE)
@@ -78,15 +78,16 @@ ohirepos::deploy_website(repo_registry, push = TRUE)
 
 You'll need to fill out all fields in `repo_registry.csv` to populate the Full Repo. You can choose the origin of the files you'll copy (it defaults to ohi-global). You have to make sure there a copy of the origin repo cloned locally. 
 
-populate layers folder and layers.csv, this will also create the scenario folder. And then create conf.  Run these in order.
+Populating the layers folder and layers.csv will also create the scenario folder. And then create conf.  Run these in order.
 
-This doesn't push, just populates. --> keep this?
-
-If you need to unpopulate your repo's scenario folder if you've redefined regions or something, clone it locally and pull, delete the senario folder, and then continue here. 
+If you need to unpopulate your repo's scenario folder if you've redefined regions or something, clone it locally and pull, delete the scenario folder, and then continue here (scripting this was overkill).
 
 You'll run these as a suite of things, so just clone during populate_layers and push as the final move after the check.
 
-```{r populate, eval=FALSE}
+```{r full repo, eval=FALSE}
+
+## create repo's maps and push
+repo <- create_repo_map(repo_registry, push = TRUE)
 
 repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
@@ -95,11 +96,6 @@ populate_conf(repo_registry)
 
 populate_etc(repo_registry)
   ## TODO: add viz
-
-## create repo's maps
-create_repo_map(key, dir_spatial, dir_scenario)
-## TODO, check this out again! Haven't yet in the July 2017 
-# -->> will need to ## Inspect user's shapefiles and save as OHI shapefiles
 
 ```
 
