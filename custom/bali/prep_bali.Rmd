@@ -1,0 +1,89 @@
+# this is prep_bali.Rmd
+
+Calculate km2 for bali. 
+
+## 1. setup
+
+```{r setup, eval=FALSE}
+
+## you set these variables
+key <- 'bali'
+dir_temp <- '~/github/clip-n-ship'
+
+## load libraries
+library(tidyverse) ## install.packages('tidyverse')
+
+ dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+               'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+               'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+
+## read in repo registry information, add working directory 
+repo_registry <- readr::read_csv('repo_registry.csv') %>%
+  dplyr::filter(study_key == key) %>%
+  dplyr::mutate(dir_repo = file.path(dir_temp, key))
+
+dir_in  <- file.path(dir_M, 'git-annex/clip-n-ship/bali/spatial/custom/raw')
+dir_out <- file.path(dir_M, 'git-annex/clip-n-ship/bali/spatial/custom')
+
+```
+
+## Read shapefile, calculate km2, resave
+
+This uses the equal area projection from http://www.cartotype.com/articles/18-use-a-wide-range-of-projections: 
+
+"Create a map of Indonesia using the Lambert azimuthal equal-area projection"
+
+`makemap +proj=laea +lat_0=-2 +lon_0=118 +ellps=WGS84 /graticule=1,15m /urbanareas=yes /extent=94,-12,142,8 /usgs=e:\new-height-data /input=e:\ctm1\coastlines.makemap indonesia.osm`
+
+Note: I opened this in QGIS and confirmed the projection in meters there:
+`+proj=utm +zone=50 +south +datum=WGS84 +units=m +no_defs`
+
+```{r explore shapefiles, eval=F}
+## inspect
+s_orig <- rgdal::readOGR(dsn = dir_in, layer = 'py_spatial_boundary_bali')
+
+shp_orig@data
+
+## set projection based on website above
+crs = sp::CRS("+proj=laea +lat_0=-2 +lon_0=118 +ellps=WGS84 +units=m")
+shp = sp::spTransform(shp_orig,crs)
+  
+shp@proj4string
+# CRS arguments:
+# +proj=laea +lat_0=-2 +lon_0=118 +ellps=WGS84 
+
+shp@data <- shp@data %>%
+  mutate(area_km2 = rgeos::gArea(shp, byid = TRUE) / 1e6)
+
+shp@data
+#  Id rgn_id      label   area_km2
+#  6      6 karangasem  909.39981
+#  5      5   buleleng 1184.00097
+#  3      3    tabanan  268.08135
+#  4      4   jembrana  598.02210
+#  2      2     badung  643.83488
+#  1      1   denpasar   96.54056
+#  8      8    gianyar  226.99760
+#  7      7  klungkung  656.98418
+
+sum(shp@data$area_km2)
+# 4583.861
+
+shp@data <- shp@data %>%
+  select(rgn_id, 
+         rgn_name = label,
+         area_km2) %>%
+  arrange(rgn_id)
+
+rgdal::writeOGR(shp, dsn = dir_out, layer = 'py_spatial_boundary_bali_clean', driver = 'ESRI Shapefile', overwrite=TRUE) 
+
+```
+
+## Create required .csv files
+```{r csv files, eval=F}
+## rgn_offshore_data.csv
+shp@data %>%
+  readr::write_csv(file.path(dir_out, 'rgn_offshore_data.csv'))
+
+```

@@ -33,7 +33,6 @@ dir_temp <- '~/github/clip-n-ship'
 
 
 ## load libraries
-# devtools::install_github("ohi-science/ohicore@dev")
 devtools::load_all('~/github/ohirepos') # or devtools::install_github("ohi-science/ohirepos")
 library(ohirepos) 
 library(tidyverse)
@@ -43,6 +42,19 @@ library(tidyverse)
 repo_registry <- readr::read_csv('repo_registry.csv') %>%
   dplyr::filter(study_key == key) %>%
   dplyr::mutate(dir_repo = file.path(dir_temp, key))
+
+## update Mazu directories if using NCEAS server
+if (any(stringr::str_detect(repo_registry, 'git-annex'))) {
+  ## mazu directories
+  dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+             'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+             'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+  
+  repo_registry <- repo_registry %>%
+    mutate(dir_shp_in  = file.path(dir_M, dir_shp_in),
+           dir_shp_out = file.path(dir_M, dir_shp_out))
+  
+}
 
 
 ## create working dir if it doesn't already exist
@@ -87,14 +99,14 @@ You'll run these as a suite of things, so just clone during populate_layers and 
 ```{r full repo, eval=FALSE}
 
 ## create repo's maps and push
-repo <- create_repo_map(repo_registry, push = TRUE)
+repo <- ohirepos::create_repo_map(repo_registry, push = TRUE)
 
 repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
 
-populate_conf(repo_registry)
+ohirepos::populate_conf(repo_registry)
 
-populate_etc(repo_registry)
+ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
 
 ```
@@ -106,11 +118,11 @@ Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
 ```{r calculate, eval=FALSE}
 
 ## calculate scores # TODO: remove ohicore@dev dependency
-calculate_scores_check(repo_registry)
+ohirepos::calculate_scores_check(repo_registry, ohicore_version = 'ohicore@dev')
 
 
 ## and push!
-commit_and_push(repo_registry, 
+ohirepos::commit_and_push(repo_registry, 
                 commit_message = 'populating test3 yo!')
 ```
 
