@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'bali'
+key <- 'toolbox-demo'
 dir_temp <- '~/github/clip-n-ship'
 
 
@@ -44,6 +44,7 @@ repo_registry <- readr::read_csv('repo_registry.csv') %>%
   dplyr::mutate(dir_repo = file.path(dir_temp, key))
 
 ## update Mazu directories if using NCEAS server
+## TODO: set warning if MAZU not mounted
 if (any(stringr::str_detect(repo_registry, 'git-annex'))) {
   ## mazu directories
   dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
