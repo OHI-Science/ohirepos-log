@@ -3,7 +3,7 @@
 This is how you create OHI repos using the package `ohirepos`. 
 
 
-# Before R: First create repo on GitHub.com and register repo
+# Before R: First create repo on GitHub and register it
 
 There are two things you need to do before executing the script below. 
 
@@ -28,12 +28,12 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'toolbox-demo'
+key <- 'tza'
 dir_temp <- '~/github/clip-n-ship'
 
 
 ## load libraries
-devtools::load_all('~/github/ohirepos') # or devtools::install_github("ohi-science/ohirepos")
+devtools::install_github("ohi-science/ohirepos") # devtools::load_all('~/github/ohirepos')
 library(ohirepos) 
 library(tidyverse)
 
@@ -45,7 +45,7 @@ repo_registry <- readr::read_csv('repo_registry.csv') %>%
 
 
 ## update Mazu directories if using NCEAS server
-if (any(stringr::str_detect(repo_registry, 'git-annex'))) {
+if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
   ## mazu directories
   dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
              'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
