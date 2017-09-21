@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'tza'
+key <- 'kor'
 dir_temp <- '~/github/clip-n-ship'
 
 
@@ -54,11 +54,11 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
   repo_registry <- repo_registry %>%
     mutate(dir_shp_in  = file.path(dir_M, dir_shp_in),
            dir_shp_out = file.path(dir_M, dir_shp_out))
+  
+  if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+    warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  }
 }
-if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
-  warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
-}
-
 
 ## create working dir if it doesn't already exist
 if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
