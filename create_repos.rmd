@@ -113,9 +113,9 @@ Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
 
 ```{r calculate, eval=FALSE}
 
-## calculate scores # TODO: remove ohicore@dev dependency
+## calculate scores 
 ohirepos::calculate_scores_check(repo_registry, 
-                                 ohicore_version = 'ohicore@dev')
+                                 ohicore_version = 'ohicore')
 
 
 ## and push!
