@@ -3,7 +3,7 @@
 This is how you create OHI repos using the package `ohirepos`. 
 
 
-# Before R: First create repo on GitHub.com and register repo
+# Before R: First create repo on GitHub and register it
 
 There are two things you need to do before executing the script below. 
 
@@ -33,7 +33,7 @@ dir_temp <- '~/github/clip-n-ship'
 
 
 ## load libraries
-devtools::load_all('~/github/ohirepos') # or devtools::install_github("ohi-science/ohirepos")
+devtools::install_github("ohi-science/ohirepos") # devtools::load_all('~/github/ohirepos')
 library(ohirepos) 
 library(tidyverse)
 
@@ -43,8 +43,9 @@ repo_registry <- readr::read_csv('repo_registry.csv') %>%
   dplyr::filter(study_key == key) %>%
   dplyr::mutate(dir_repo = file.path(dir_temp, key))
 
+
 ## update Mazu directories if using NCEAS server
-if (any(stringr::str_detect(repo_registry, 'git-annex'))) {
+if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
   ## mazu directories
   dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
              'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
@@ -54,17 +55,13 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'))) {
     mutate(dir_shp_in  = file.path(dir_M, dir_shp_in),
            dir_shp_out = file.path(dir_M, dir_shp_out))
   
+  if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
+    warning(sprintf("The Mazu directory dir_M set in src/R/common.R does not exist. Do you need to mount Mazu: %s?", dir_M))
+  }
 }
-
 
 ## create working dir if it doesn't already exist
 if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
-
-
-# dir_work <- path.expand('~/github/ohi-webapps') # get rid of any reliance on ohi-webapps
-## load this stuff from ohirepos.
-# source(file.path(dir_work, 'common.r'))
-# source(file.path(dir_work, 'create_init_sc.R'))
 
 ```
 
@@ -83,7 +80,6 @@ repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
 ohirepos::deploy_website(repo_registry, push = TRUE) 
-
 ```
 
 # Populate Full Repo
@@ -117,19 +113,13 @@ Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
 
 ```{r calculate, eval=FALSE}
 
-## calculate scores # TODO: remove ohicore@dev dependency
-ohirepos::calculate_scores_check(repo_registry, ohicore_version = 'ohicore@dev')
+## calculate scores 
+ohirepos::calculate_scores_check(repo_registry, 
+                                 ohicore_version = 'ohicore')
 
 
 ## and push!
 ohirepos::commit_and_push(repo_registry, 
-                commit_message = 'populating test3 yo!')
+                          commit_message = sprintf('finalized %s repo!', key))
 ```
-
-
-
-
-# dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
-#            'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
-#            'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
 
