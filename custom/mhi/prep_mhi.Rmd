@@ -1,6 +1,4 @@
 # This is prep_mhi.Rmd
-# This is prep_col.Rmd
-
 
 ## 0. add col to `sc_studies_custom.csv` 
 
