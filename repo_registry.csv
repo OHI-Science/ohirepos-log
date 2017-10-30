@@ -28,4 +28,5 @@ sam,Samoa,region2017,2017,~/github/ohi-global/eez,gl2016,151,Samoa,,,,
 ken,Kenya,,,,,43,Kenya,,,,
 tza,Tanzania,,,,,202,Tanzania,,,,
 kor,Republic of Korea,korea2016,2016,~/github/ohi-global/eez,gl2016,20,Republic of Korea,~/github/ohirepos-log/custom/kor/spatial,~/github/ohirepos-log/custom/kor/spatial,SouthKorea,
+whi,West Hawaiian Islands,region2017,2017,~/github/mhi/region2017,mhi2017,1,Hawaii,git-annex/clip-n-ship/whi/spatial/custom,git-annex/clip-n-ship/whi/spatial,WH_OHI_zones_TW12NM,
 
