@@ -15,7 +15,7 @@ Add by hand to `ohirepos-log/repo_registry.csv`
 ```{r setup, eval=F}
 
 # read in shp files and save with desired headers in data frame.
-shp = rgdal::readOGR(dsn = repo_registry$dir_shp_in, layer = repo_registry$name_shp_files)
+shp = rgdal::readOGR(dsn = repo_registry$dir_shp_in, layer = WH_OHI_zones_TW12NM)
 
 # view dataframe and map
 shp@data
@@ -23,36 +23,20 @@ plot(shp)
 
 ## clean up
 shp@data <- shp@data %>%
-  dplyr::select(rgn_id = Id, rgn_name = Zone, area_km2 = Shape_Area)
+  dplyr::mutate(area_km2 = Shape_Area / 1000) %>%
+  dplyr::select(rgn_id = Id, rgn_name = Zone, area_km2 )
 shp@data$rgn_id[shp@data$rgn_name == "South"] = 1
 shp@data$rgn_id[shp@data$rgn_name == "North"] = 2
 
-# save as shapefiles. will create 4 files: .dbf, .prj, .shp, .shx
-# writeOGR(shp, dsn = dir_shp, layer = key, driver = 'ESRI Shapefile', overwrite=T) 
-# 
-# ## ave/rgn_offshore_data.csv on git-annex
-# write.csv(shp@data, file.path(dir_shp, 'rgn_offshore_data.csv'))
-# 
+## save as shapefiles. will create 4 files: .dbf, .prj, .shp, .shx
+rgdal::writeOGR(shp, dsn = repo_registry$dir_shp_in, layer = key, driver = 'ESRI Shapefile', overwrite=TRUE)
+
+## ave/rgn_offshore_data.csv on git-annex
+write.csv(shp@data, file.path(repo_registry$dir_shp_out, 'rgn_offshore_data.csv'))
+
 # # create lookup table with unique rgn_ids
-# write_csv(shp@data, sprintf('%s/%s_rgns_custom.csv', dir_custom, key))
+# dir.create( sprintf('%s/%s', repo_registry$dir_repo,repo_registry$scenario_name))
+# dir.create( sprintf('%s/%s/spatial', repo_registry$dir_repo,repo_registry$scenario_name))
+# write_csv(shp@data, sprintf('%s/%s/spatial/%s_rgns_custom.csv', repo_registry$dir_repo,repo_registry$scenario_name, key))
 
 ```
-
-
-## 3. prep shp map with custom_maps()
-Proceed as in `create_all.r` and run `custom_maps()`
-
-```{r prep col map custom_maps, eval=FALSE}
-
-keys_redo = 'col'
-key = keys_redo[1]
-
-setwd(dir_repos)
-source(sprintf('%s/ohi-webapps/create_init_sc.R', dir_github))
-setwd(dir_repo)
-
-# fun custom_maps
-custom_maps(key) 
-
-```
-
