@@ -32,8 +32,8 @@ key <- 'mex'
 dir_temp <- '~/github/clip-n-ship'
 
 
-## load libraries
-devtools::install_github("ohi-science/ohirepos") # devtools::load_all('~/github/ohirepos')
+## load libraries. NOTE: functions.r and brew have trouble with install_github; need load_all.
+devtools::install_github("ohi-science/ohirepos") # devtools::load_all('~/github/ohirepos') 
 library(ohirepos) 
 library(tidyverse)
 
