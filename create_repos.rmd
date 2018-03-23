@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'mex'
+key <- 'ccol'
 dir_temp <- '~/github/clip-n-ship'
 
 
