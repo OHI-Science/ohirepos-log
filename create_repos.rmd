@@ -94,12 +94,8 @@ If you need to unpopulate an existing repo, there are instructions below.
 ```{r starter repo, eval=FALSE}
 
 ## populate the prep repo — create a repo object for the master branch 
-    # repo <- ohirepos::populate_init(repo_registry, push = TRUE)
-    # repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
-
-## temporary: clone by hand and run populate_prep w/o git2r until CRAN fix
-ohirepos::populate_prep(repo_registry, push = TRUE)
-
+repo <- ohirepos::populate_init(repo_registry, push = TRUE) # note: error with branch, workaround is to clone by hand to clip-n-ship
+repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
 ohirepos::deploy_website(repo_registry, push = TRUE) 
