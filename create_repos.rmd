@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'testy'
+key <- 'toolbox-demo'
 dir_temp <- '~/github/clip-n-ship'
 
 
@@ -120,6 +120,7 @@ repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
 
 ohirepos::populate_conf(repo_registry)
+## NOTE!! must remove by hand between: ## Reference Point Accounting ## Reference Point End. Code at a later date
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
