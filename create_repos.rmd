@@ -28,15 +28,14 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'ccol'
+key <- 'toolbox-demo'
 dir_temp <- '~/github/clip-n-ship'
 
 
 ## load libraries. NOTE: functions.r and brew have trouble with install_github; need load_all.
-devtools::install_github("ohi-science/ohirepos") # devtools::load_all('~/github/ohirepos') 
-library(ohirepos) 
 library(tidyverse)
-
+library(ohirepos) # devtools::install_github("ohi-science/ohirepos") 
+                  # devtools::load_all('~/github/ohirepos') 
 
 ## read in repo registry information, add working directory 
 repo_registry <- readr::read_csv('repo_registry.csv') %>%
@@ -52,7 +51,7 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
              'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
   
   repo_registry <- repo_registry %>%
-    mutate(dir_shp_in  = file.path(dir_M, dir_shp_in),
+    dplyr::mutate(dir_shp_in  = file.path(dir_M, dir_shp_in),
            dir_shp_out = file.path(dir_M, dir_shp_out))
   
   if (Sys.info()[['sysname']] != 'Linux' & !file.exists(dir_M)){
@@ -61,7 +60,27 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
 }
 
 ## create working dir if it doesn't already exist
-if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
+# if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
+
+```
+
+# Tier 1 repo
+
+First, source our spatial data from Mazu (so this requires a connection to Mazu), and gets the most up-to-date files! The primary spatial polygon file is `regions` (which is a simple feature (`sf` object).
+
+Then, extract the key you are interested in
+
+```{r tier 1 repo, eval=FALSE}
+
+## source spatial data -- this takes awhile so don't run it by accident!
+# source("https://raw.githubusercontent.com/OHI-Science/ohiprep_v2018/master/src/R/spatial_common.R")
+
+## extract global region
+source('../ohirepos/R/extract_global_region.R')
+extract_global_region(repo_registry, 
+                      dir_save = repo_registry$dir_shp_out)
+
+# Then, Copy ohi-global draft branch (done by hand for sam April 9 2018)
 
 ```
 
@@ -75,7 +94,7 @@ If you need to unpopulate an existing repo, there are instructions below.
 ```{r starter repo, eval=FALSE}
 
 ## populate the prep repo — create a repo object for the master branch 
-repo <- ohirepos::populate_init(repo_registry, push = TRUE)
+repo <- ohirepos::populate_init(repo_registry, push = TRUE) # note: error with branch, workaround is to clone by hand to clip-n-ship
 repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
@@ -101,6 +120,7 @@ repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
 
 ohirepos::populate_conf(repo_registry)
+## NOTE!! must remove by hand between: ## Reference Point Accounting ## Reference Point End. Code at a later date
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
