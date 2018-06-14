@@ -64,13 +64,15 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
 
 ```
 
+<!---
+
 # Tier 1 repo
 
 First, source our spatial data from Mazu (so this requires a connection to Mazu), and gets the most up-to-date files! The primary spatial polygon file is `regions` (which is a simple feature (`sf` object).
 
 Then, extract the key you are interested in
 
-```{r tier 1 repo, eval=FALSE}
+{r tier 1 repo, eval=FALSE}
 
 ## source spatial data -- this takes awhile so don't run it by accident!
 # source("https://raw.githubusercontent.com/OHI-Science/ohiprep_v2018/master/src/R/spatial_common.R")
@@ -82,8 +84,8 @@ extract_global_region(repo_registry,
 
 # Then, Copy ohi-global draft branch (done by hand for sam April 9 2018)
 
-```
 
+--->
 
 # Populate the Starter Repo
 
