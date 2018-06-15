@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'toolbox-demo'
+key <- 'ken'
 dir_temp <- '~/github/clip-n-ship'
 
 
@@ -101,6 +101,9 @@ repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
 ohirepos::deploy_website(repo_registry, push = TRUE) 
+
+## create explore-global.Rmd. Requires connection to NCEAS's server
+source('create_global_explore.R')
 ```
 
 # Populate Full Repo
