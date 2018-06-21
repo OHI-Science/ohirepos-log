@@ -28,11 +28,11 @@ ohirepos::extract_mazu_by_rgn(mazu_filename = "globalprep/spp_ico/v2017/summary/
 
 ## brew explore-data.Rmd ----
 
-brew::brew(system.file(sprintf('master/explore-data.brew.Rmd'), package='ohirepos'),
-           file.path(repo_registry$dir_repo, 'global_explore/explore-data.Rmd'))
+brew::brew(system.file(sprintf('master/explore_data.brew.Rmd'), package='ohirepos'),
+           file.path(repo_registry$dir_repo, 'global_explore/explore_data.Rmd'))
 
 ## knit .html
-rmarkdown::render(file.path(repo_registry$dir_repo, 'global_explore/explore-data.Rmd'))
+rmarkdown::render(file.path(repo_registry$dir_repo, 'global_explore/explore_data.Rmd'))
 
 ## create README with url
 brew::brew(system.file(sprintf('master/README_global_explore.brew.md'), package='ohirepos'),
