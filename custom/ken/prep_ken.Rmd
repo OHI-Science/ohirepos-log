@@ -1,0 +1,33 @@
+# this is prep_ken.Rmd
+
+```{r}
+
+# run from create_repos.rmd
+repo_registry
+gh_org = 'OHI-Science'
+
+ ## create variables ----
+  key             <- repo_registry$study_key
+  dir_repo        <- repo_registry$dir_repo
+  dir_scenario    <- file.path(repo_registry$dir_repo, repo_registry$scenario_name)
+  dir_scenario_sp <- file.path(dir_scenario, 'spatial')
+  dir_conf        <- file.path(dir_scenario, 'conf')
+  dir_web         <- file.path(dir_conf, 'web')
+  dir_shp_in_orig      <- file.path(repo_registry$dir_shp_in, "orig")
+  dir_shp_out_orig     <- file.path(repo_registry$dir_shp_out, "custom")
+  shp_name        <- repo_registry$name_shp_files
+
+  shp_orig = rgdal::readOGR(dsn=dir_shp_in_orig, layer=shp_name)
+  crs = sp::CRS("+proj=longlat +datum=WGS84")
+  shp = sp::spTransform(shp_orig,crs)
+ 
+  shp@data <- shp@data %>%
+    dplyr::select(rgn_id = County_ID,
+                  rgn_name = County,
+                  area_km2 = Area_Km2)
+  
+  rgdal::writeOGR(shp, dsn=dir_shp_out_orig,
+                  shp_name, driver='ESRI Shapefile', overwrite=TRUE)
+
+```
+

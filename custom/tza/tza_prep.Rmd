@@ -1,0 +1,43 @@
+For TZA, had to rename columns within and save: 
+
+```{r}
+
+  ## create variables ----
+  key             <- repo_registry$study_key
+  gh_org          <- repo_registry$gh_org
+  dir_repo        <- repo_registry$dir_repo
+  dir_scenario    <- file.path(repo_registry$dir_repo, repo_registry$scenario_name)
+  dir_scenario_sp <- file.path(dir_scenario, 'spatial')
+  dir_conf        <- file.path(dir_scenario, 'conf')
+  dir_web         <- file.path(dir_conf, 'web')
+  dir_shp_in      <- file.path(repo_registry$dir_shp_in)
+  dir_shp_out     <- file.path(repo_registry$dir_shp_out)
+  shp_name        <- repo_registry$name_shp_files
+
+
+  ## clone repo master branch ----
+  unlink(dir_repo, recursive=TRUE, force=TRUE)
+  repo <- ohirepos::clone_repo(dir_repo,
+                               sprintf('https://github.com/%s/%s.git',
+                                       gh_org, key))
+
+
+  ## create directories if they don't already exist ----
+  if (!file.exists(dir_scenario))    dir.create(dir_scenario)
+  if (!file.exists(dir_scenario_sp)) dir.create(dir_scenario_sp)
+  if (!file.exists(dir_conf))        dir.create(dir_conf)
+  if (!file.exists(dir_web))         dir.create(dir_web)
+
+
+  ## process shapefiles; ensure projection and rename ----
+  shp_orig = rgdal::readOGR(dsn=dir_shp_in, layer=shp_name)
+  crs = sp::CRS("+proj=longlat +datum=WGS84")
+  shp = sp::spTransform(shp_orig,crs)
+
+shp@data <- shp@data %>%
+    dplyr::rename(rgn_id = Region_ID, rgn_name = Region, area_km2 = Area_KM)
+  
+rgdal::writeOGR(shp, dsn=dir_shp_out,
+                  layer=shp_name, driver='ESRI Shapefile', overwrite=TRUE)
+  
+```
