@@ -28,14 +28,14 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'esw'
-dir_temp <- '~/github/clip-n-ship'
+key <- 'phl'
+dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
 ## load libraries. NOTE: functions.r and brew have trouble with install_github; need load_all.
 library(tidyverse)
 library(ohirepos) # devtools::install_github("ohi-science/ohirepos") 
-                  # devtools::load_all('~/github/ohirepos') 
+                  # devtools::load_all('~/github/ohirepos') # loading locally makes brew work better
 
 ## read in repo registry information, add working directory 
 repo_registry <- readr::read_csv('repo_registry.csv') %>%
