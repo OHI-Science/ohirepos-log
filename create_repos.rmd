@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'bhi'
+key <- 'mra'
 dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
@@ -104,6 +104,7 @@ ohirepos::deploy_website(repo_registry, push = TRUE)
 
 ## create explore-global.Rmd. 
 ## Takes several minutes. Requires connection to NCEAS's server
+## Note! study_area must be an OHI-Global region; if not change temporarily ;)
 source('create_global_explore.R')
 ohirepos::commit_and_push(repo_registry, "create global_explore folder")
 ```
