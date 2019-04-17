@@ -124,11 +124,15 @@ You'll run these as a suite of things, so just clone during populate_layers and 
 ## create repo's maps and push
 repo <- ohirepos::create_repo_map(repo_registry, push = TRUE)
 
+## create layers/ folder and layers.csv
 repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
 
+## populate conf folder. 
 ohirepos::populate_conf(repo_registry)
-## NOTE!! must remove by hand between: ## Reference Point Accounting ## Reference Point End. Code at a later date
+## NOTE!! The fix to this error: `Error in 1:ln_beg : NA/NaN argument`
+## -> Must go to functions.R, search `## Reference Point` and delete by hand between: `## Reference Point Accounting` and `## Reference Point End.` 
+## TODO Code this up at a later date
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
@@ -144,6 +148,14 @@ Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
 ## calculate scores 
 ohirepos::calculate_scores_check(repo_registry, 
                                  ohicore_version = 'ohicore')
+## Troubleshooting:
+## If this fails, try this: 
+## Open the `mse` (for example) repo in a new RStudio session
+## Run calculate_scores.Rmd line by line and see where it fails.
+## You'll then have to go to the specific function that failed and look for something that is global specific that is failing with OHI+
+## For example, ICO will fail because of gapfilling, so you'll have to delete the gapfilling section
+## Error in data.frame(goal = "ICO", dimension = rep(c("status", "trend"),  : 
+##  object 'regions_NA' not found 
 
 
 ## and push!
