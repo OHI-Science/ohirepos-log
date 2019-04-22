@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'mse'
+key <- 'nor-scores'
 dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
@@ -133,6 +133,12 @@ ohirepos::populate_conf(repo_registry)
 ## NOTE!! The fix to this error: `Error in 1:ln_beg : NA/NaN argument`
 ## -> Must go to functions.R, search `## Reference Point` and delete by hand between: `## Reference Point Accounting` and `## Reference Point End.` 
 ## TODO Code this up at a later date
+
+## NOTE!! Another troubleshooting thing to do by hand in order to calculate scores in next chunk below: 
+## 1. search for `eez/` and search-replace this with the scenario name (e.g. `region`). 
+## 2. create a temp folder in the scenario folder.
+
+## NOTE!! Finally, delete the `Oecussi Ambeno (rgn 237)` gapfilling part from ICO; this is ~40 lines.
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
