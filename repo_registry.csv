@@ -39,3 +39,4 @@ mse,Ecuador,OHI-Science,region2019,2019,~/Documents/github/ohi-global/eez,gl2018
 mra,Moorea,OHI-Science,,,,,147,French Polynesia,,,,
 can-slg,Gulf of Saint Lawrence,OHI-Science,region,2018,~/github/ohi-global/eez,gl2018,218,Canada,git-annex/clip-n-ship/can-slg/spatial,git-annex/clip-n-ship/can-slg/spatial,region_coastline,
 nor-scores,Norway,OHI-Norway,municipality,2018,~/github/ohi-global/eez,gl2018,223,Norway,git-annex/clip-n-ship/nor-scores/spatial,git-annex/clip-n-ship/nor-scores/spatial,Study_Municipalities_Ocean_Area_Only,nor-scores/nor_prep.Rmd
+ind,Indonesia,,region2019,2019,~/github/ohi-global/eez,2019,216,Indonesia,,,,
