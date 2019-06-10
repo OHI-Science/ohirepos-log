@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'mse'
+key <- 'bob'
 dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
@@ -137,8 +137,7 @@ ohirepos::populate_conf(repo_registry)
 ## NOTE!! Another troubleshooting thing to do by hand in order to calculate scores in next chunk below: 
 ## 1. search for `eez/` and search-replace this with the scenario name (e.g. `region`). 
 ## 2. create a temp folder in the scenario folder.
-
-## NOTE!! Finally, delete the `Oecussi Ambeno (rgn 237)` gapfilling part from ICO; this is ~40 lines.
+## 3. Finally, delete the `Oecussi Ambeno (rgn 237)` gapfilling part from ICO; this is ~40 lines.
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
