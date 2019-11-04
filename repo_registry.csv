@@ -41,3 +41,4 @@ can-slg,Gulf of Saint Lawrence,OHI-Science,region,2018,~/github/ohi-global/eez,g
 nor-scores,Norway,OHI-Norway,municipality,2018,~/github/ohi-global/eez,gl2018,223,Norway,git-annex/clip-n-ship/nor-scores/spatial,git-annex/clip-n-ship/nor-scores/spatial,Study_Municipalities_Ocean_Area_Only,nor-scores/nor_prep.Rmd
 ind,Indonesia,,region2019,2019,~/github/ohi-global/eez,2019,216,Indonesia,,,,
 bob,Bay of Biscay,OHI-Science,region,2018,~/github/ohi-global/eez,gl2019,182,Spain,git-annex/clip-n-ship/bob/spatial,git-annex/clip-n-ship/bob/spatial,bob,
+mal,The Maldives,OHI-Science,maldives,2018,~/github/ohi-global/eez,gl2018,39,Maldives,git-annex/clip-n-ship/mal/spatial,git-annex/clip-n-ship/mal/spatial,mal,
