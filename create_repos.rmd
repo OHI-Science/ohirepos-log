@@ -96,11 +96,11 @@ If you need to unpopulate an existing repo, there are instructions below.
 ```{r starter repo, eval=FALSE}
 
 ## populate the prep repo — create a repo object for the master branch 
-repo <- ohirepos::populate_init(repo_registry, push = TRUE) # note: error with branch, workaround is to clone by hand to clip-n-ship
-repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
+repo <- ohirepos::populate_init(repo_registry, push = FALSE) # note: error with branch, workaround is to clone by hand to clip-n-ship
+repo <- ohirepos::populate_prep(repo_registry, push = FALSE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
-ohirepos::deploy_website(repo_registry, push = TRUE) 
+ohirepos::deploy_website(repo_registry, push = FALSE) 
 
 ## create explore-global.Rmd. 
 ## Takes several minutes. Requires connection to NCEAS's server
@@ -122,7 +122,7 @@ You'll run these as a suite of things, so just clone during populate_layers and 
 ```{r full repo, eval=FALSE}
 
 ## create repo's maps and push
-repo <- ohirepos::create_repo_map(repo_registry, push = TRUE)
+repo <- ohirepos::create_repo_map(repo_registry, push = FALSE)
 
 ## create layers/ folder and layers.csv
 repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
