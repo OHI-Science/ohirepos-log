@@ -1,0 +1,53 @@
+# this is prep_bob.Rmd
+
+Prepare shapefiles from Bay of Biscay
+
+## 1. setup
+
+```{r setup, eval=FALSE}
+
+## you set these variables
+key <- 'bob'
+dir_temp <- '~/github/clip-n-ship'
+
+## load libraries
+library(tidyverse) ## install.packages('tidyverse')
+library(rgdal)
+
+ dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
+               'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
+               'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
+
+
+## read in repo registry information, add working directory 
+repo_registry <- readr::read_csv('repo_registry.csv') %>%
+  dplyr::filter(study_key == key) %>%
+  dplyr::mutate(dir_repo = file.path(dir_temp, key))
+
+dir_in  <- file.path(dir_M, 'git-annex/clip-n-ship/bob/spatial/custom/raw')
+dir_out <- file.path(dir_M, 'git-annex/clip-n-ship/bob/spatial')
+
+```
+
+## Read shapefile, calculate km2, resave
+
+## Read shapefile, update name, resave
+
+```{r explore shapefiles, eval=F}
+## inspect
+shp <- rgdal::readOGR(dsn = dir_in, layer = 'BoB_OHI_shapefile')
+shp@data
+str(shp@data)
+# plot(shp)
+  
+## rename
+shp@data <- shp@data %>%
+  rename(rgn_id = id) %>%
+  mutate(rgn_name = rgn_id, 
+         area_km2 = NA) %>%
+  select(rgn_id, rgn_name, area_km2)
+
+shp@data
+
+writeOGR(shp, dsn = dir_out, layer = 'bob', driver = 'ESRI Shapefile', overwrite=TRUE) 
+```

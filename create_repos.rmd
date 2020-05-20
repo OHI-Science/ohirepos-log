@@ -28,7 +28,7 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'phl'
+key <- 'mal'
 dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
@@ -96,14 +96,15 @@ If you need to unpopulate an existing repo, there are instructions below.
 ```{r starter repo, eval=FALSE}
 
 ## populate the prep repo — create a repo object for the master branch 
-repo <- ohirepos::populate_init(repo_registry, push = TRUE) # note: error with branch, workaround is to clone by hand to clip-n-ship
-repo <- ohirepos::populate_prep(repo_registry, push = TRUE)
+repo <- ohirepos::populate_init(repo_registry, push = FALSE) # note: error with branch, workaround is to clone by hand to clip-n-ship
+repo <- ohirepos::populate_prep(repo_registry, push = FALSE)
 
 ## deploy the website — don't create a repo object because it's a gh-pages branch
-ohirepos::deploy_website(repo_registry, push = TRUE) 
+ohirepos::deploy_website(repo_registry, push = FALSE) 
 
 ## create explore-global.Rmd. 
 ## Takes several minutes. Requires connection to NCEAS's server
+## Note! study_area must be an OHI-Global region; if not change temporarily ;)
 source('create_global_explore.R')
 ohirepos::commit_and_push(repo_registry, "create global_explore folder")
 ```
@@ -121,13 +122,22 @@ You'll run these as a suite of things, so just clone during populate_layers and 
 ```{r full repo, eval=FALSE}
 
 ## create repo's maps and push
-repo <- ohirepos::create_repo_map(repo_registry, push = TRUE)
+repo <- ohirepos::create_repo_map(repo_registry, push = FALSE)
 
+## create layers/ folder and layers.csv
 repo <- ohirepos::populate_layers(repo_registry, multi_nation = FALSE)
   ## TODO come back here to make sure the empty layers don't cause a problem (removed swapping global mean stuff); still clean up.
 
+## populate conf folder. 
 ohirepos::populate_conf(repo_registry)
-## NOTE!! must remove by hand between: ## Reference Point Accounting ## Reference Point End. Code at a later date
+## NOTE!! The fix to this error: `Error in 1:ln_beg : NA/NaN argument`
+## -> Must go to functions.R, search `## Reference Point` and delete by hand between: `## Reference Point Accounting` and `## Reference Point End.` 
+## TODO Code this up at a later date
+
+## NOTE!! Another troubleshooting thing to do by hand in order to calculate scores in next chunk below: 
+## 1. search for `eez/` and search-replace this with the scenario name (e.g. `region`). 
+## 2. create a temp folder in the scenario folder.
+## 3. Finally, delete the `Oecussi Ambeno (rgn 237)` gapfilling part from ICO; this is ~40 lines.
 
 ohirepos::populate_etc(repo_registry)
   ## TODO: add viz
@@ -143,6 +153,14 @@ Can also test this from the repo itself (open the the clip-n-ship/key/.rproj)
 ## calculate scores 
 ohirepos::calculate_scores_check(repo_registry, 
                                  ohicore_version = 'ohicore')
+## Troubleshooting:
+## If this fails, try this: 
+## Open the `mse` (for example) repo in a new RStudio session
+## Run calculate_scores.Rmd line by line and see where it fails.
+## You'll then have to go to the specific function that failed and look for something that is global specific that is failing with OHI+
+## For example, ICO will fail because of gapfilling, so you'll have to delete the gapfilling section
+## Error in data.frame(goal = "ICO", dimension = rep(c("status", "trend"),  : 
+##  object 'regions_NA' not found 
 
 
 ## and push!
