@@ -5,7 +5,7 @@ Scripts for creating OHI repos with the `ohirepos` package.
 
 ## Example workflow
 
-1. Clone `ohirepos-log` locally
+1. Clone `ohirepos-log` locally, or PULL!
 1. Open `create_repos.Rmd` and start reading...
   1. Create `pal-scores` and `tet-scores` repos in the [OHI-4site](https://github.com/OHI-4site) github org and have admin permissions
   1. Open `repo_registry.csv` and [register `pal-scores` and `tet-scores`]()
