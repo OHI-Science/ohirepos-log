@@ -28,14 +28,14 @@ You will need to assign two variables based on the repository you want to create
 ```{r setup, eval=FALSE}
 
 ## you set these variables
-key <- 'mal'
+key <- 'pal-scores'
 dir_temp <- '~/github/clip-n-ship' # create this folder
 
 
 ## load libraries. NOTE: functions.r and brew have trouble with install_github; need load_all.
 library(tidyverse)
 library(ohirepos) # devtools::install_github("ohi-science/ohirepos") 
-                  # devtools::load_all('~/github/ohirepos') # loading locally makes brew work better
+                  # devtools::load_all('~/github/ohi-science/ohirepos') # loading locally makes brew work better
 
 ## read in repo registry information, add working directory 
 repo_registry <- readr::read_csv('repo_registry.csv') %>%
@@ -63,29 +63,6 @@ if (any(stringr::str_detect(repo_registry, 'git-annex'), na.rm=TRUE)) {
 # if(!file.exists(repo_registry$dir_repo)) dir.create(repo_registry$dir_repo)
 
 ```
-
-<!---
-
-# Tier 1 repo
-
-First, source our spatial data from Mazu (so this requires a connection to Mazu), and gets the most up-to-date files! The primary spatial polygon file is `regions` (which is a simple feature (`sf` object).
-
-Then, extract the key you are interested in
-
-{r tier 1 repo, eval=FALSE}
-
-## source spatial data -- this takes awhile so don't run it by accident!
-# source("https://raw.githubusercontent.com/OHI-Science/ohiprep_v2018/master/src/R/spatial_common.R")
-
-## extract global region
-source('../ohirepos/R/extract_global_region.R')
-extract_global_region(repo_registry, 
-                      dir_save = repo_registry$dir_shp_out)
-
-# Then, Copy ohi-global draft branch (done by hand for sam April 9 2018)
-
-
---->
 
 # Populate the Starter Repo
 
